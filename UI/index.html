@@ -16,30 +16,35 @@
         </div>
 
         <div class="left-header">
-            <span style="color: #fff; margin: 0 10px 0 0;" >Filters:</span>
+            <span class="filters-logo">Filters:</span>
 
             <div class="flex-filter-item">
-                <label for="label-userName" class="filter icon-userName">
+                <label for="label-user-name" class="filter icon-user-name">
                 </label>
-                <input type="checkbox" id="label-userName" style="display: none;" name="radio">
-                <input type="text" class="input-name" placeholder="input UserName" maxlength="15">
-
+                <input type="checkbox" id="label-user-name" style="display: none;" name="radio">
+                <div class="back-for-filter">
+                    <input type="text" class="input" placeholder="input UserName" maxlength="15">
+                </div>
             </div>
 
             <div class="flex-filter-item">
                 <label for="label-date" class="filter icon-date">
                 </label>
                 <input type="checkbox"  id="label-date" style="display: none;" name="radio">
-                <input type="date" class="input-date1">
-                <input type="date" class="input-date2">
+                <div class="back-for-filter">
+                    <input type="date" class="input">
+                    <input type="date" class="input">
+                </div>
             </div>
 
             <div class="flex-filter-item">
                 <label for="label-text" class="filter icon-text">
                 </label>
                 <input type="checkbox" id="label-text" style="display: none;" name="radio">
-                <input type="text" class="input-text" placeholder="input text massage" maxlength="15">
-            </div>
+                <div class="back-for-filter">
+                    <input type="text" class="input" placeholder="input text massage" maxlength="15">
+                </div>  
+                </div>
         </div>
 
         <div class="left-header">
@@ -54,7 +59,7 @@
     </header>
 
     <div class="container">
-        <div class="container-block">
+        <!-- <div class="container-block"> -->
             <aside class="left-aside">
                 <div class="chat-items selected-chat-item">
                     <img class="main-img" src="img/logo-JC.svg" alt="Icon of main chat">
@@ -71,15 +76,15 @@
             </aside>
 
             <div class="chat">
-                <div class="chat-space">
-                    <div class="chat-space-block">
-                        <div class="loud-flex">
-                            <button class="loud-more">
+                <div class="chat-space" id="chat">
+                    <!-- <div class="chat-space-block"> -->
+                        <div class="loud-flex" id="loud-flex">
+                            <button class="loud-more" id="loud-more">
                                 <img src="img/row-top.svg" alt="">
                             </button>
                         </div>
 
-                        <div class="stick">
+                        <div class="stick test">
                             <span class="date-history">09.10.2020</span>
                         </div>
                         <div class="message-item">
@@ -177,14 +182,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="message-item">
+                        <div class="message-item ">
                             <div class="icon"><img src="/img/userIcon.svg" alt="" style="background: darkorchid"></div>
                             <div style="display: flex; flex-direction: column;">
                                 <div class="info-message">
                                     <div class="info-message-name">Ivan Sergeev</div>
                                     <div class="info-message-time">9.49</div>
                                 </div>
-                                <div class="text-message your-mes">
+                                <div class="text-message your-mes you">
                                     Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
                                     Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
                                     natoque penatibus et magnis dis parturient montes,
@@ -237,7 +242,7 @@
                             </div>
                         </div>
 
-                    </div>
+                    <!-- </div> -->
                 </div>
                 <div class="message-space">
                     <input class="message" type="text" placeholder="Type a message">
@@ -270,7 +275,7 @@
                     <div class="online-name">Nastya</div>
                 </div>
             </aside>
-        </div>
+        <!-- </div> -->
     </div>
     <footer>
         <p>Just Chat</p>
@@ -278,6 +283,6 @@
         <p>Report: lenivecnew@gmail.com</p>
         <p>Updated 10.10.2020</p>
     </footer>
-    </div>
+    <script src="script.js"> </script>
 </body>
 </html>
