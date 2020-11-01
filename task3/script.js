@@ -156,8 +156,8 @@ const messages = [
 
 
 const module=(function(){
-    function getMessages(skip=0, top=10, filterComfig){ //в messages элетениы расположыены а хронологическом порядке, но если его нарушить 
-        let f1=messages.slice(),f2=null;                //функция работает верно
+    function getMessages(skip=0, top=10, filterComfig){ 
+        let f1=messages.slice(),f2=null;           
         for(let key in filterComfig){
             console.log(filterComfig[key]);
 
