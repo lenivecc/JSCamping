@@ -1,4 +1,6 @@
-const messages = [
+const module=(function(){
+   let author="Павел Лебедев";
+   const messages = [
   {
      id: '1',
      text: 'Привет!',
@@ -152,32 +154,23 @@ const messages = [
      isPersonal: false
   },
 ];
+   const filterObj={
+      author: (item, author)=> !author || item.author.toLowerCase().includes(author.toLowerCase()),
+      text: (item, text)=> !text || item.text.toLowerCase().includes(text.toLowerCase()),
+      dateTo: (item, dateTo)=> !dateTo || item.createdAt<dateTo,
+      dateFrom: (item, dateFrom)=> !dateFrom || item.createdAt>dateFrom
+   };
+   const validateObj={
+      text: (item)=>item.text && item.text.length<=200
+   };
 
 
-
-const module=(function(){
-    function getMessages(skip=0, top=10, filterComfig){ 
-        let f1=messages.slice(),f2=null;           
-        for(let key in filterComfig){
-            console.log(filterComfig[key]);
-
-            f2=f1.filter((item)=>{
-            if(key==="author"){
-                if(item.author.includes(filterComfig[key])) return true;
-            }
-            if(key==="dateFrom"){
-                if(item.createdAt>=filterComfig[key]) return true;
-            }
-            if(key==="dateTo"){
-                if(item.createdAt<=filterComfig[key]) return true;
-            }
-            if(key==="text"){
-                 if(item.text.toLowerCase().includes(filterComfig[key].toLowerCase())) return true;
-            }
-            });
-            f1=f2.slice();
-        }
-        return f1.sort((a,b)=>{
+    function getMessages(skip=0, top=10, filterComfig={}){ 
+      let result=messages.slice();
+      Object.keys(filterComfig).forEach((key)=>{
+         result=result.filter((item)=>filterObj[key](item,filterComfig[key]));
+      });
+        return result.sort((a,b)=>{
             return a.createdAt-b.createdAt;
         })
         .slice(skip,skip+top);  
@@ -190,64 +183,13 @@ const module=(function(){
             });
     }
     function validateMessage(msg){
-        if(msg.hasOwnProperty("id", "text", "createdAt", "author")){        
-            if(typeof msg["id"]==="string"){
-               let k=0;
-               for(let i in messages){
-                  if(messages[i].id===msg["id"]){
-                     k++;
-                  }
-               }
-               if(k>0){
-                  console.log("Id is not unique!");
-                  return false;
-               }
-            }else{
-               console.log("typeof id is not string");
-               return false;
-            }
-            if(typeof msg["text"]==="string"){
-               if(msg["text"].length===0 || msg["text"].length>200){
-                  console.log("Length of messages's text is invalid!")
-                  return false;
-               } 
-            }else{
-               console.log("typeof text is not string");
-               return false;
-            }                
-            if(!(msg["createdAt"] instanceof Date)){
-               console.log("typeof createdAt is not Date");
-               return false;
-            }         
-            if(typeof msg["author"]==="string"){
-               if(msg["author"].length===0){
-                  console.log("Length of author's name is invalid!")
-                  return false;
-               }
-            }else{
-               console.log("typeof author is not string");
-               return false;
-            }
-        }else{
-           console.log("Object doesn't have one of four required properties!");
-           return false;
-        }
-        if(msg.hasOwnProperty("isPersonal")){
-           if(typeof msg["isPersonal"]!=="boolean"){
-               console.log("typeof isPersonal is not boolean");
-               return false;
-           }
-           if(msg.hasOwnProperty("to")){
-               if(typeof msg["to"]!=="string"){
-                  console.log("typeof to is not string");
-                  return false;
-               }
-           }
-        }
-        return true;
+      return Object.keys(validateObj).every((key)=>validateObj[key](msg));
     }
 
     function addMessage(msg){
+      msg.id=`${Date.now()}`
+      msg.author=author;
+      msg.createdAt=new Date();
       if(validateMessage(msg)){
          messages.push(msg);
          return true;
@@ -313,7 +255,6 @@ const module=(function(){
 // console.log(module.getMessage('777'));
 
 
-// console.log(module.validateMessage(messages[19]));
 // console.log(module.validateMessage(messages[1]));
 // for(let key in messages){
 //    console.log(module.validateMessage(messages[key]));
@@ -338,15 +279,17 @@ const module=(function(){
 
 // console.log(module.getMessage('23'));
 // console.log(module.addMessage({
-//    id: '23',
 //    text: 'Проснулся уже?',
-//    createdAt: new Date('2020-10-13T08:00:00'),
-//    author: 'Катюха',
 //    isPersonal: true,
 //    to: 'Петров Петр'
 // }
 // ));
-// console.log(module.getMessage('23'));
+// console.log(module.addMessage({
+//    text: 'Проснулся уже?',
+// }
+// ));
+// console.log(module.getMessages(0,10,{text: "ро"}));
+// console.log(module.getMessages());
 
 
 // console.log(module.addMessage({
@@ -374,7 +317,7 @@ const module=(function(){
 // console.log(module.getMessage('20'));
 
 
-console.log(module.getMessages(0,30));
-console.log(module.removeMessage('20'));
-console.log(module.getMessages(0,30));
+// console.log(module.getMessages(0,30));
+// console.log(module.removeMessage('20'));
+// console.log(module.getMessages(0,30));
 
