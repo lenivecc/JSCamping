@@ -3,10 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
-    
+    <div class="header-user" id="header-user">
+
+    </div>
+    <div class="container">
+        <div class="left">
+
+        </div>
+        <div>
+            <h3>Сообщения</h3>
+            <template id="msgs-tmpl">
+                <div class="message">
+                    <span class="user-name"></span>
+                    <span class="time"></span>
+                    <p class="msg-text"></p>
+                </div>
+            </template>
+            <div class="center" id="messages">
+
+            </div>
+        </div>
+        
+        <div class="right" id="active-users">
+            <h3>Онлайн</h3>
+            <template id="online-tmpl">
+                <div class="user-online" id="user-online">
+                    <p class="user-name-online"></p>
+                </div>
+            </template>
+        </div>
+    </div>
 </body>
-<script src="script.js"></script>
+<script src="newscript.js" type="module"></script>
+<script src="script.js" type="module"></script>
+
 </html>
