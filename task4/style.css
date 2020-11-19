@@ -1,0 +1,14 @@
+.header-user{
+    height: 50px;
+    text-align: right;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.own-msg{
+    background: orange;
+}
