@@ -30,7 +30,7 @@ class Message{
         this._createdAt=createdAt;
     }
 }
-class MessageList{
+export class MessageList{
     constructor(msgs){
         this._array=msgs.map(item=>new Message(item));
         this._user="User";
@@ -53,7 +53,7 @@ class MessageList{
     set user(user){
         this._user=user;
     }
-    static filterObject={
+    static filterObject = {
         author: (item, author)=> !author || item.author.toLowerCase().includes(author.toLowerCase()),
         text: (item, text)=> !text || item.text.toLowerCase().includes(text.toLowerCase()),
         dateTo: (item, dateTo)=> !dateTo || item.createdAt<dateTo,
@@ -85,7 +85,9 @@ class MessageList{
         if(MessageList.validate(msg)){
             let msg_for_adding=new Message(msg);
             this.array.push(msg_for_adding);
+            return true;
         }
+        return false;
     }
     addAll(msgs){
         msgs=msgs.map(item=>new Message(item));
@@ -98,7 +100,8 @@ class MessageList{
         }
         return result;
     }
-    static validateObject={        
+    static validateObject={    
+        author: (item)=>item.author,    
         text: (item)=>item.text && item.text.length<=200 && item.text.length>0,
         isPersonal: (item)=> !item.isPersonal || typeof item.isPersonal==="boolean",
         to: (item)=> !item.to || typeof item.to==="string"
@@ -120,11 +123,11 @@ class MessageList{
                     delete  new_msg.isPersonal;
                     delete  new_msg.to;
                 }
+                if(MessageList.validate(new_msg)){
+                    this.array.splice(this.array.indexOf(this.get(id)),1,new_msg);
+                    return true;
+                }   
             }
-        if(MessageList.validate(new_msg)){
-            this.array.splice(this.array.indexOf(this.get(id)),1,new_msg);
-            return true;
-        }       
         return false;
     }
     remove(id){
@@ -142,7 +145,7 @@ class MessageList{
 
 
 
-const array_of_messages=[
+export const array_of_messages=[
 
     {
     id: '8',
@@ -163,7 +166,7 @@ const array_of_messages=[
     {
     id: '10',
     createdAt: new Date('2020-10-12T23:25:00'),
-    author: 'Срегей',
+    author: 'Pasha',
     text: "message 3"
     },
     {
@@ -185,11 +188,18 @@ const array_of_messages=[
     id: '13',
     createdAt: new Date('2020-10-12T23:40:00'),
     author: 'User',
-    text: "",
+    text: "dtfghjkl;",
 
+    },
+    {
+    id: '14',
+    createdAt: new Date('2020-10-12T23:45:00'),
+    author: 'User',
+    text: "dtfgrthyjyukiulytrhjkl;",
     }
 ]; 
-const messageList=new MessageList(array_of_messages);
+export const messageList=new MessageList(array_of_messages);
+// console.log(messageList.user());
 // const msg1=new Message({
 //     text: "test text for test"
 // });
@@ -199,25 +209,27 @@ messageList.add({
     text: "test text for test"
 });
 
-console.log(messageList.getPage()); 
+// console.log(messageList.getPage()); 
 
 messageList.add({
     text: "test text for test for other user",
     isPersonal: true,
     to: "Other user"
 });
-console.log(messageList.getPage()); 
-
-console.log(messageList.addAll(array_of_messages));
-
-
-console.log(messageList.getPage(0,10,{author: "Ив"})); 
-
-console.log(messageList.edit("13", {text: "edit", isPersonal: true,to:"Agent777"}));
 // console.log(messageList.getPage()); 
 
-// console.log(messageList.remove("13"));
-console.log(messageList.getPage()); 
+// console.log(messageList.addAll(array_of_messages));
 
-console.log(messageList.clear()); 
-console.log(messageList.getPage()); 
+
+// console.log(messageList.getPage(0,10,{author: "Ив"})); 
+
+// console.log(messageList.edit("13", {text: "edit", isPersonal: true,to:"Agent777"}));
+// // console.log(messageList.getPage()); 
+
+// // console.log(messageList.remove("13"));
+// console.log(messageList.getPage()); 
+
+// console.log(messageList.clear()); 
+// console.log(messageList.getPage()); 
+
+// console.log(messageList.user);
