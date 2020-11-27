@@ -2,7 +2,7 @@ class Message{
     constructor(msg){
         this._id=msg.id;
         this._author=msg.author;
-        this._createdAt=msg.createdAt;
+        this._createdAt=new Date(msg.createdAt);
         this.text=msg.text;
         if(msg.isPersonal){
             this.isPersonal=msg.isPersonal;

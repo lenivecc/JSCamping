@@ -1,10 +1,12 @@
-let messageList=new MessageList(array_of_messages);
+// let messageList=new MessageList();
 
 
 class UserList {
   constructor(users, activeUsers) {
     this._users = users;
     this._activeUsers = activeUsers;
+    console.log(this.activeUsers);
+    console.log(this.users);
   }
 
   get users() {
@@ -31,12 +33,13 @@ class HeaderView {
       header.innerHTML = `<p class="UserName">${user}</p>`;
       document.querySelector(".btn-exit").style.display="block";
       document.getElementById("link-auti-reg").style.display="none";
-      messageList.user = user;
+      return user;
     } else {
-      messageList.user = '';
+      // messageList.user = '';
        document.getElementById("link-auti-reg").style.display="block";
       header.innerHTML = `<p class="UserName">${""}</p>`;
       document.querySelector(".btn-exit").style.display="none";
+      return "";
     }
   }
 }
@@ -58,6 +61,7 @@ class MessagesView {
 
   display(msgList, user) {
     console.log(msgList);
+    // console.log(new Date(msgList[0].createdAt))
     const temp = document.getElementById('msgs-tmpl');
     const temp2 = document.getElementById('msgs-date-tmpl');
     const parent = document.getElementById(this.containerId);
@@ -86,6 +90,7 @@ class MessagesView {
       el.querySelector('.info-message-name').textContent = item.author;
       el.querySelector('.info-message-time').textContent = `${item.createdAt.getHours()}:${item.createdAt.getMinutes()}`;
       el.querySelector('.text-message').textContent = item.text;
+      el.querySelector(".message-item").id=item.id;
       if (item.author === user) {
         el.querySelector('.text-message').className = 'your-mes';
         el.getElementById('img-icon').style.background = 'darkorchid';
@@ -94,12 +99,12 @@ class MessagesView {
     }
     parent.innerHTML = '';
     parent.appendChild(fragment);
-    parent.innerHTML+=`                    
-      <div class="loud-flex" id="loud-flex">
-        <button class="loud-more" id="loud-more">
-          <img src="img/row-top.svg" alt="">
-        </button>
-      </div>`;
+    // parent.innerHTML+=`                    
+    //   <div class="loud-flex" id="loud-flex">
+    //     <button class="loud-more" id="loud-more">
+    //       <img src="img/row-top.svg" alt="">
+    //     </button>
+    //   </div>`;
   }
 }
 

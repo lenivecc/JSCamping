@@ -25,7 +25,9 @@
                 </label>
                 <input type="checkbox" id="label-user-name" style="display: none;" name="radio">
                 <div class="back-for-filter">
-                    <input type="text" class="input" placeholder="input UserName" maxlength="15">
+                    <form action="" name="form_author_filter">
+                    <input type="text" class="input" placeholder="input UserName" maxlength="15" id="filter-author" name="author-input">
+                    </form>
                 </div>
             </div>
 
@@ -34,8 +36,8 @@
                 </label>
                 <input type="checkbox" id="label-date" style="display: none;" name="radio">
                 <div class="back-for-filter">
-                    <input type="date" class="input">
-                    <input type="date" class="input">
+                    <input type="date" class="input" id="filter-date-from">
+                    <input type="date" class="input" id="filter-date-to">
                 </div>
             </div>
 
@@ -44,31 +46,86 @@
                 </label>
                 <input type="checkbox" id="label-text" style="display: none;" name="radio">
                 <div class="back-for-filter">
-                    <input type="text" class="input" placeholder="input text massage" maxlength="15">
+                    <input type="text" class="input" placeholder="input text massage" maxlength="15" id="filter-msg">
                 </div>
             </div>
         </div>
 
         <div class="right-header">
             <div id="link-auti-reg">
-                <a class="autoreg">Вход</a>
-                <span>/</span>
-                <a class="autoreg">Регистрация</a>
+                <a class="autoreg" id="signin">Вход</a>
+                <span>/</span> 
+                <a class="autoreg" id="registr">Регистрация</a>
             </div>
 
             <span class="UserName" id="user-name"></span>
-            <button class="btn-exit">Exit</button>
+            <button class="btn-exit" id="btn-exit">Exit</button>
 
             <button class="burger" type="button">
                 <span class="bugreg__item"> Menu </span>
             </button>
         </div>
-
     </header>
+
+    <div class="authorization">
+        <div class="flex-author">
+            <div class="a-header">
+                <h1>Just Chat</h1>
+                <div>
+                    <a  class="return re-chat" href="">chat</a>
+                    <span style="margin: 0 5px;">/</span>
+                    <a class="return re-registr" href="">registraton</a>
+                </div>
+
+            </div>
+            <div class="forma" >
+                <h1>Sign in</h1>
+                <form action="" id="author-form" name="authorization">
+                    <input type="text" class="sgn-npt" placeholder="login" required>
+                    <br>
+                    <input type="password" class="sgn-npt" placeholder="password" required>
+                    <br>
+                    <br>
+                    <button type="submit" class="enter" id="submit-author">Enter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="registration">
+        <div class="flex-author">
+            <div class="a-header">
+                <h1>Just Chat</h1>
+                <div>
+                    <a class="return re-chat" href="">chat</a>
+                    <span style="margin: 0 5px;">/</span>
+                    <a class="return re-author" href="">authorization</a>
+                </div>
+    
+            </div>
+            <div class="forma" >
+                <h1>Registration</h1>
+                <form action="" id="registr-form" name="registration"> 
+                    <input type="text" class="sgn-npt" placeholder="login" required>
+                    <div class="login-error" id="login-error">
+                        <span>The user with this name already exists</span>
+                    </div>
+                    <input type="password" class="sgn-npt" placeholder="password" required>
+                    <input type="password" class="sgn-npt" placeholder="password" required>
+                    <br><br>
+                    <button type="submit" class="enter" id="submit-registr">Enter</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <!-- <div class="container-block"> -->
         <aside class="left-aside">
+                <div class="loud-flex" id="loud-flex">
+                    <button class="loud-more" id="loud-more">
+                        <img src="img/row-top.svg" alt="">
+                    </button>
+                </div>
             <div class="chat-items selected-chat-item">
                 <img class="main-img" src="img/logo-JC.svg" alt="Icon of main chat">
                 <span class="chatName">Just Chat</span>
@@ -102,9 +159,13 @@
             <span class="date-history"></span>
         </div>
     </template>
+    <div class="msg-menu" id="msg-menu">
+        <button class="btn-msg" id="btn-edit-msg">Edit</button>
+        <button class="btn-msg" id="btn-delete-msg">Delete</button>
+    </div>
             <div class="chat-space" id="chat">
                 <!-- <div class="chat-space-block"> -->
-                <div class="message-item">
+                <!-- <div class="message-item">
                     <div class="icon"><img src="/img/userIcon.svg" alt=""></div>
                     <div class="flex-info-message">
                         <div class="info-message">
@@ -120,7 +181,7 @@
                             natoque penatibus et magnis dis parturient montes,
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- <div class="message-item">
                     <div class="icon"><img src="/img/userIcon.svg" alt="" style="background: darkorchid"></div>
                     <div style="display: flex; flex-direction: column;">
@@ -262,8 +323,8 @@
                 <!-- </div> -->
             </div>
             <div class="message-space">
-                <input class="message" type="text" placeholder="Type a message">
-                <button class="btn-send">
+                <input class="message" type="text" placeholder="Type a message" id="new-message" disabled>
+                <button class="btn-send" id="btn-send" disabled>
                 </button>
             </div>
         </div>
@@ -308,12 +369,13 @@
         <p>Report: lenivecnew@gmail.com</p>
         <p>Updated 10.10.2020</p>
     </footer>
-
+    
     <script src="mocks.js"></script>
     <script src="message.js"></script>
     <script src="messageList.js"></script>
     <script src="viewClasses.js"></script>
-    <script src="globalFunctions.js"></script>
+    <!-- <script src="globalFunctions.js"></script> -->
+    <script src="chatController.js"></script>
 
 
 </body>
