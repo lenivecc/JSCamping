@@ -1,7 +1,20 @@
 class MessageList{
     constructor(msgs){
-        this._array=msgs.map(item=>new Message(item));
-        this._user="User";
+        // if(JSON.parse(localStorage.getItem("messageList"))){
+            this._array=JSON.parse(localStorage.getItem("messageList")).map(item=>new Message(item));
+        //     console.log("lsar");
+        // }else{
+        //    this._array=msgs.map(item=>new Message(item));
+        //    console.log("ar");
+        // }
+        // if(JSON.parse(localStorage.getItem("user"))){
+            this._user=JSON.parse(localStorage.getItem("user"));
+        //     console.log("lsus");
+        // }else{
+        //     this._user="";
+        //     console.log("us");
+        // }
+        // this.restore();
     }
     get user(){
         return this._user;
@@ -21,6 +34,14 @@ class MessageList{
     set user(user){
         this._user=user;
     }
+    save(){
+        localStorage.setItem("user",JSON.stringify(this.user));
+        localStorage.setItem("messageList",JSON.stringify(this.array));
+    }
+    restore(){
+        this._array=JSON.parse(localStorage.getItem("messageList"));
+        this._user=JSON.parse(localStorage.getItem("user"));
+    }
     static filterObject = {
         author: (item, author)=> !author || item.author.toLowerCase().includes(author.toLowerCase()),
         text: (item, text)=> !text || item.text.toLowerCase().includes(text.toLowerCase()),
@@ -34,6 +55,7 @@ class MessageList{
         });
         result=result.filter((item)=>{
             if(item.author===this.user || item.to===this.user || item.isPersonal===false || !item.isPersonal){
+            //    console.log(item.createdAt);
                 return true;
             }
             return false;
@@ -53,6 +75,7 @@ class MessageList{
         if(MessageList.validate(msg)){
             let msg_for_adding=new Message(msg);
             this.array.push(msg_for_adding);
+            // this.save();
             return true;
         }
         return false;
@@ -66,6 +89,7 @@ class MessageList{
             }
             this.array.push(msgs[i]);
         }
+        this.save();
         return result;
     }
     static validateObject={    
@@ -93,6 +117,7 @@ class MessageList{
                 }
                 if(MessageList.validate(new_msg)){
                     this.array.splice(this.array.indexOf(this.get(id)),1,new_msg);
+                    console.log("validation and adding");
                     return true;
                 }   
             }
@@ -101,6 +126,7 @@ class MessageList{
     remove(id){
         if(this.get(id) && this.get(id).author===this.user){
             this.array.splice(this.array.indexOf(this.get(id)),1);
+            // this.save();
             return true;
         }
         return false;

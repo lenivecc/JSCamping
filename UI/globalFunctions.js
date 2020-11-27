@@ -7,7 +7,7 @@ const userList = new UserList(['Dima', 'Zhenya Zh.', 'Zhenya H.', 'Sasha', 'Pash
 
 function setCurrentUser(user) {
   headerView.display(user);
-  messagesView.display(messageList.getPage(), messageList.user);
+  messagesView.display(messageList.getPage(skip, top, filterConfig), messageList.user);
 }
 function showActiveUsers() {
   activeUsersView.display(userList.activeUsers);

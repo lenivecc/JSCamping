@@ -30,7 +30,97 @@ header{
     padding-right: 20px;
 }
 
+.authorization{
+    display: none;
+    position: absolute;
+    height: calc(100% - 80px);
+    width: 100%;
+    background-color: #2B2A3D;
+    top:0;
+    left:0;
+    z-index: 10000;
+}
 
+.registration{
+    display: none;
+    position: absolute;
+    height: calc(100% - 80px);
+    width: 100%;
+    background-color: #2B2A3D;
+    top:0;
+    left:0;
+    z-index: 10000;
+}
+
+.flex-author{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.a-header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    font-size: 1.5em;
+    color: #fff;
+    padding: 0 20px;
+}
+
+.return{
+    color: #fff;
+    text-decoration: none;
+    opacity: .75;
+}
+
+
+.return:hover{
+    opacity: 1;
+}
+
+.forma{
+    position: absolute;
+    top: 30%;
+    min-width: 25em;
+    max-width: 30%;
+    border-radius: 30px;
+    background-color: #838383;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+.enter{
+    /* display: inline;
+    text-align: center; */
+    /* width: 100px;
+    margin: auto; */
+    background-color: #2B2A3D;
+    color: #fff;
+    font-size: 1.5em;
+    border-radius: 5px;
+    outline: none;
+}
+
+.sgn-npt{
+    font-size: 1.5em;
+    margin: 10px;
+    border: 0;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.login-error{
+    display: none;
+    color: red;
+}
+
+.sgn-npt::after{
+    content:"gerdfg"
+}
 
 .filters-logo{
     color: #fff;
@@ -234,9 +324,11 @@ input{
 }
 
 .loud-flex{
+    position: absolute;
+    left: 75%;
     display: flex;
     justify-content: center;
-
+    z-index: 1000;
 }
 
 .loud-more{
@@ -387,14 +479,31 @@ hr{
     cursor: pointer;
     outline: none;
     background-image: url(img/btn-send.svg);
-    fill: #2DAE00;
 }
 
-.icon-send{
+/* .icon-send{
     display: block;
     height: 100%;
     width: 100%;
     fill: #636363;
+} */
+
+.msg-menu{
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 100000;
+    /* background-color: #fff; */
+}
+
+.btn-msg{
+
+    width: 6em;
+    margin: 0;
+    border: 0;
+     outline: none;
 }
 
 .right-aside{
