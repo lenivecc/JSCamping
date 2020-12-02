@@ -1,8 +1,8 @@
 class Message{
     constructor(msg){
-        this._id=msg.id;
-        this._author=msg.author;
-        this._createdAt=new Date(msg.createdAt);
+        this._id=msg.id || msg._id;
+        this._author=msg.author|| msg._author;
+        this._createdAt=msg.createdAt|| msg._createdAt;
         this.text=msg.text;
         if(msg.isPersonal){
             this.isPersonal=msg.isPersonal;

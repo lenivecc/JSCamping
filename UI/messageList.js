@@ -1,20 +1,25 @@
 class MessageList{
-    constructor(msgs){
+    constructor(){
         // if(JSON.parse(localStorage.getItem("messageList"))){
-            this._array=JSON.parse(localStorage.getItem("messageList")).map(item=>new Message(item));
+            this._array=JSON.parse(localStorage.getItem("messageList"),function(key,value){
+                // console.log(key)
+                if(key ==="_createdAt") return new Date(value);
+                return value;
+            // });
+            }).map((item)=>new Message(item));
         //     console.log("lsar");
         // }else{
         //    this._array=msgs.map(item=>new Message(item));
         //    console.log("ar");
         // }
         // if(JSON.parse(localStorage.getItem("user"))){
-            this._user=JSON.parse(localStorage.getItem("user"));
+            this._user="";
         //     console.log("lsus");
         // }else{
         //     this._user="";
         //     console.log("us");
         // }
-        // this.restore();
+        this.restore();
     }
     get user(){
         return this._user;
@@ -27,28 +32,33 @@ class MessageList{
     }
     set array(array){
         this._array=array;
+        this.save();
     }
     get user(){
         return this._user;
     }
     set user(user){
         this._user=user;
+        this.save();
     }
     save(){
         localStorage.setItem("user",JSON.stringify(this.user));
         localStorage.setItem("messageList",JSON.stringify(this.array));
     }
     restore(){
-        this._array=JSON.parse(localStorage.getItem("messageList"));
+        // this._array=JSON.parse(localStorage.getItem("messageList"));
         this._user=JSON.parse(localStorage.getItem("user"));
-    }
+    } 
     static filterObject = {
         author: (item, author)=> !author || item.author.toLowerCase().includes(author.toLowerCase()),
         text: (item, text)=> !text || item.text.toLowerCase().includes(text.toLowerCase()),
         dateTo: (item, dateTo)=> !dateTo || item.createdAt<dateTo,
-        dateFrom: (item, dateFrom)=> !dateFrom || item.createdAt>dateFrom
+        dateFrom: (item, dateFrom)=> dateFrom && item.createdAt>dateFrom
     }; 
     getPage(skip=0,top=10,filterConfig={}){
+        // Object.keys(filterConfig).forEach((key)=>{
+        //     if(key==="") delete filterConfig.key;
+        // });
         let result=this.array.slice();
         Object.keys(filterConfig).forEach((key)=>{
             result=result.filter((item)=>MessageList.filterObject[key](item,filterConfig[key]));
@@ -75,7 +85,7 @@ class MessageList{
         if(MessageList.validate(msg)){
             let msg_for_adding=new Message(msg);
             this.array.push(msg_for_adding);
-            // this.save();
+            this.save();
             return true;
         }
         return false;
@@ -118,6 +128,7 @@ class MessageList{
                 if(MessageList.validate(new_msg)){
                     this.array.splice(this.array.indexOf(this.get(id)),1,new_msg);
                     console.log("validation and adding");
+                    this.save();
                     return true;
                 }   
             }
@@ -126,7 +137,7 @@ class MessageList{
     remove(id){
         if(this.get(id) && this.get(id).author===this.user){
             this.array.splice(this.array.indexOf(this.get(id)),1);
-            // this.save();
+            this.save();
             return true;
         }
         return false;
