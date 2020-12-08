@@ -52,6 +52,26 @@ header{
     z-index: 10000;
 }
  
+.error{
+    display: none;
+    justify-content: center;
+    position: absolute;
+    height: calc(100% - 80px);
+    width: 100%;
+    background-color: #2B2A3D;
+    top:0;
+    left:0;
+    z-index: 10000;
+}
+
+.error-text{
+    display: flex;
+    align-items: center;
+    width: 30%;
+    margin: 2em;
+    color: #fff;
+    font-size: 2em;
+}
 
 .flex-author{
     display: flex;
@@ -120,6 +140,15 @@ header{
     color: red;
 }
 
+.reg-error{
+    display: none;
+    color: red;
+}
+
+.reg-error-wpass{
+    display: none;
+    color: red;
+}
 .sgn-npt::after{
     content:"gerdfg"
 }
@@ -223,6 +252,7 @@ input{
 .UserName{
     color: #fff;
     font-size: 1.25em;
+    line-height: .75;
 }
 
 .autoreg{
@@ -333,6 +363,14 @@ input{
     justify-content: center;
     z-index: 1000;
 }
+
+/* .loud-flex:hover::after{
+    content: "Click right mouse button to reset";
+    display: flex;
+    width: 3em;
+    font-size: .5em;
+} */
+
 
 .loud-more{
     margin-top: 10px;
@@ -478,6 +516,7 @@ hr{
     border: 0;
     border-radius: 25px;
     padding-left: 10px;
+    padding-right: 50px;
     color: #fff;
 }
 
