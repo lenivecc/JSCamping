@@ -1,11 +1,10 @@
 class ChatController{
     constructor(){
-        this.messageList=new MessageList(JSON.parse(localStorage.getItem("messageList")));
-        this.userList=new UserList(JSON.parse(localStorage.getItem("userList"))[0],JSON.parse(localStorage.getItem("userList"))[1]);
         this.activeUsersView=new ActiveUsersView('online-panel');
         this.headerView = new HeaderView('user-name');
         this.messagesView = new MessagesView('chat');
         this.personalUsersView=new PersonalUsersView("select-user-name");
+        this.chatApiServeci=new ChatApiService();
         this.msgs_container=document.getElementById("chat");
         this.return_chat1=document.getElementById("return-chat1");
         this.return_chat2=document.getElementById("return-chat2");
@@ -27,20 +26,18 @@ class ChatController{
         this.filter={};
         this.reset=document.getElementById("reset");
         this.target="";
+        this.token="";
+        this.user=""
+        this.showMessagesTimeout=null;
+        this.showUsersTimeout=null;
         this.f_addMessage=function(){
-            console.log(this);
-            // const select=document.getElementById("select-user-name");
-            // console.log(select.value);
             if(this.select.value==="public"){
-                this.addMessage({text: this.add_message.value});
+                this.addMessage({text: this.add_message.value, author: JSON.parse(localStorage.getItem("user")),isPersonal: false});
             }
             else{
-                this.addMessage({text: this.add_message.value,isPersonal: true, to: this.select.value});
+                this.addMessage({text: this.add_message.value,isPersonal: true, to: this.select.value, author: JSON.parse(localStorage.getItem("user"))});
             }
-
             this.add_message.value="";
-            // this.removeEventListener("click",this);
-            console.log("addint");
         }
         this.f_addMessage=this.f_addMessage.bind(this);
         this.f_editMessage=function(){
@@ -66,45 +63,36 @@ class ChatController{
             msg_menu.style.top=`${event.clientY}px`;
             msg_menu.style.left=`${event.clientX}px`;
             msg_menu.style.display="flex";
-            // console.log(msg_menu.style.top);
-            // console.log(target.closest(".message-item").id);
             btn_delete_msg.addEventListener("click",function(){
-                obj.removeMessage(obj.target.closest(".message-item").id);
-                console.log(obj.target.closest(".message-item").id);
+                const url="https://jslabdb.datamola.com/messages/";
+                console.log(obj);
+                obj.chatApiServeci.delM(`${url}${obj.target.closest(".message-item").id}`)
+                .then(res=>{
+                    console.log(obj.target.closest(".message-item").id);
+                    msg_menu.style.display="none";
+                    obj.showMessages();
+                });
+            });
+            btn_edit_msg.addEventListener("click",function(){
                 msg_menu.style.display="none";
-                // console.log("deleting");
-        });
-        btn_edit_msg.addEventListener("click",function(){
-            msg_menu.style.display="none";
-            obj.add_message.value=obj.target.innerHTML;
-            obj.btn_send.removeEventListener("click", obj.f_addMessage);
-            obj.btn_send.addEventListener("click",obj.f_editMessage);
-        }); 
-    }
-        this.msgs_container.addEventListener("click",function(){
-        msg_menu.style.display="none";
-    })
+                obj.add_message.value=obj.target.innerHTML; 
+                obj.btn_send.removeEventListener("click", obj.f_addMessage);
+                obj.btn_send.addEventListener("click",obj.f_editMessage);
+            }); 
         }
-        // this.f_load_more=function(){
-        //     console.log(this);
-        //     this.showMessages(0,ChatController.count_messages+=10,{
-        //     author: this.filter_author_value,
-        //     dateFrom: this.filter_date_from_value,
-        //     dateTo: this.filter_date_to_value,
-        //     text: this.filter_msg_value
-        //     })
-        // }
-        // this.load_more.addEventListener("click", this.f_load_more); 
-        // this.events();
+        this.msgs_container.addEventListener("click",function(){
+            msg_menu.style.display="none";
+        });
+        }
         this.events(this);
+        this.usersTimeout=null;
     }
     events(obj){
-        // this.showAllUsers();
-        document.addEventListener("load", this.showAllUsers());
         document.addEventListener("load", this.showActiveUsers());
-        document.addEventListener("load", this.showMessages());
+        document.addEventListener("load", this.showMessages(0,10));
         document.addEventListener("load", this.setCurrentUser());
         this.load_more.addEventListener("click", this.f_load_more.bind(obj));   
+        this.load_more.addEventListener("contextmenu", this.f_load_more_reset.bind(obj));   
         this.btn_signin.addEventListener("click",this.signin.bind(obj));
         this.btn_send.addEventListener("click", this.f_addMessage);
         this.msgs_container.addEventListener("contextmenu", function(event){obj.f_contextmenu.call(obj,event,obj)});
@@ -115,11 +103,20 @@ class ChatController{
             obj.showMessages(0,10,obj.filter)
         });
         this.filter_date_to.addEventListener("change", function() {
-            obj.filter.dateTo= obj.filter_date_to.value;
+            const dateTo=new Date(obj.filter_date_to.value);
+            console.log(dateTo);
+            obj.filter.dateTo= `${dateTo.getFullYear()}${dateTo.getMonth()+1}${addZero(dateTo.getDate())}`;
             obj.showMessages(0,10,obj.filter)
         });
+        function addZero(date){
+            if(date.toString().length===1){
+                return `0${date}`
+            }
+            return date;
+        }
         this.filter_date_from.addEventListener("change", function() {
-            obj.filter.dateFrom= obj.filter_date_from.value;
+            const dateFrom=new Date(obj.filter_date_from.value);
+            obj.filter.dateFrom= `${dateFrom.getFullYear()}${dateFrom.getMonth()+1}${addZero(dateFrom.getDate())}`;
             obj.showMessages(0,10,obj.filter)
         });
         this.filter_msg.addEventListener("input", function() {
@@ -127,7 +124,6 @@ class ChatController{
             obj.showMessages(0,10,obj.filter)
         });
         this.reset.addEventListener("click",function(){
-            // const reset_form=
             document.getElementById("filter-form").reset();
             obj.showMessages();
             obj.filter_author_value="";
@@ -135,7 +131,6 @@ class ChatController{
             obj.filter_date_from_value="";
             obj.filter_msg_value=""
             obj.filter={};
-            console.log("tgdb");
         })
         this.return_chat1.addEventListener("click", function(event){
             event.preventDefault();
@@ -150,15 +145,41 @@ class ChatController{
     }
     static count_messages=10;
     showActiveUsers() {
-        console.log(this.userList.users);
-        console.log(this)
-        this.activeUsersView.display(this.userList.activeUsers);
+        if(this.showUsersTimeout) {
+            clearTimeout(this.showUsersTimeout);
+        }
+        const url="https://jslabdb.datamola.com/users";
+        fetch(url,{
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            }
+        },)
+        .then((response)=>{
+            return response.json();
+        })
+        .then((result)=>{
+            this.activeUsersView.display(result);
+            this.personalUsersView.display(result,JSON.parse(localStorage.getItem("user")));
+            this.showUsersTimeout=setTimeout(()=>{
+                 this.showActiveUsers();
+            },60*1000);
+        });
     }
-    showMessages(skip, top, filter) {
-        console.log(skip,top,filter);
-        console.log(this.messageList.array);
-        console.log(this.messageList.getPage(skip, top, filter));
-        this.messagesView.display(this.messageList.getPage(skip, top, filter), this.messageList.user);
+    showMessages(skip=0, top=10, filter={}) {
+        if(this.showMessagesTimeout) {
+            clearTimeout(this.showMessagesTimeout);
+        }
+        this.chatApiServeci.getmes(skip, top, filter)
+        .then((result)=>{
+            this.messagesView.display(result,JSON.parse(localStorage.getItem("user")));
+            this.showMessagesTimeout=setTimeout(()=>{
+                 this.showMessages();
+            },60*1000);
+        }).catch((error)=>{
+            const errorr=document.querySelector(".error");
+            errorr.style.display="flex";
+        });
     }
     signin(){
         const frame_signin=document.querySelector(".authorization");
@@ -167,58 +188,105 @@ class ChatController{
         form_author[0].focus();
         form_author.addEventListener("submit",(event)=>{
             event.preventDefault();
-            if(this.userList.users.find((item)=>item===form_author[0].value)){
-                this.messageList.user=form_author[0].value;
-                this.headerView.display(this.messageList.user);
-                this.messagesView.display(this.messageList.getPage(), this.messageList.user);
-                // localStorage.setItem("user",JSON.stringify(form_author[0].value));
-                form_author[0].value="";
-                form_author[1].value="";
-                frame_signin.style.display="none";
-                document.getElementById("select-user-name").disabled=false;
-                document.getElementById("new-message").disabled=false;
-                document.getElementById("btn-send").disabled=false;
+            // if(this.userList.users.find((item)=>item===form_author[0].value)){
+                // this.messageList.user=form_author[0].value;
+                // this.headerView.display(this.messageList.user);
+                // this.messagesView.display(this.messageList.getPage(), this.messageList.user);
+                // // localStorage.setItem("user",JSON.stringify(form_author[0].value));
+                // form_author[0].value="";
+                // form_author[1].value="";
+                // frame_signin.style.display="none";
+                // document.getElementById("select-user-name").disabled=false;
+                // document.getElementById("new-message").disabled=false;
+                // document.getElementById("btn-send").disabled=false;
 
-            }
+
+                const formAuth = new FormData(form_author);
+                const url="https://jslabdb.datamola.com/auth/login";
+                this.chatApiServeci.post(url,formAuth)   
+                .then(res=>{
+                    if(res.status===200){
+                        return res.json();
+                    }
+                    if(res.status===401){
+                        const login_error=document.getElementById("login-error");
+                        login_error.style.display="block";
+                        setTimeout(()=>{
+                           login_error.style.display="none";
+                        },3*1000); 
+                    }
+                    else{
+                        const errorr=document.querySelector(".error");
+                        errorr.style.display="flex";
+                    }
+                }).then(data=>{
+                        const form_author=document.getElementById("author-form");
+                        localStorage.setItem("user",JSON.stringify(form_author[0].value));
+                        localStorage.setItem("token",JSON.stringify(data.token))
+                        this.headerView.display(JSON.parse(localStorage.getItem("user")));
+                        this.showMessages(); 
+                        form_author[0].value="";
+                        form_author[1].value="";
+                        frame_signin.style.display="none";
+                        document.getElementById("select-user-name").disabled=false;
+                        document.getElementById("new-message").disabled=false;
+                        document.getElementById("btn-send").disabled=false;
+                });
         });
-        this.showMessages();
     }
     registration(){
         const frame_registr=document.querySelector(".registration");
         frame_registr.style.display="block";
         const form_registr=document.getElementById("registr-form");
         form_registr[0].focus();
-        console.log(form_registr[3]);
         form_registr.addEventListener("submit",(event)=>{
             event.preventDefault();
-            if(this.userList.users.find((item)=>item===form_registr[0].value)){
-                const login_error=document.getElementById("login-error");
-                login_error.style.display="block";
+            if(form_registr[1]===form_registr[2]){
+                const formReg = new FormData(form_registr);
+                const url="https://jslabdb.datamola.com/auth/register";
+                this.chatApiServeci.post(url,formReg)   
+                .then(res=>{
+                    if(res.status===200){
+                        frame_registr.style.display="none";
+                        this.signin();
+                    }
+                    if(res.status===409){
+                        const reg_error=document.querySelector(".reg-error");
+                        reg_error.style.display="block";
+                        setTimeout(()=>{
+                            reg_error.style.display="none";
+                        },3*1000); 
+                        
+                    }
+                    if((res.status>=400 && res.status<409) || res.status>409){
+                        const errorr=document.querySelector(".error");
+                        errorr.style.display="flex";
+                    }
+                })
+                .catch(error=>{
+                    console.log("regist failed "+error)
+                });
             }
             else{
-                this.messageList.user=form_registr[0].value;
-                // this.userList.array.push(this.messageList.user);
-                console.log(this.userList.users.length);
-                let arr=this.userList.users;
-                arr.push(this.messageList.user);
-                this.userList.users=arr;
-                this.headerView.display(this.messageList.user);
-                this.messagesView.display(this.messageList.getPage(), this.messageList.user);
-                frame_registr.style.display="none";
-                document.getElementById("select-user-name").disabled=false;
-                document.getElementById("new-message").disabled=false;
-                document.getElementById("btn-send").disabled=false;
+                const reg_error=document.querySelector(".reg-error-wpass");
+                reg_error.style.display="block";
+                setTimeout(()=>{
+                    reg_error.style.display="none";
+                },3*1000);
             }
-        });
-    }
-    change(){
-
+            
+        });       
     }
     addMessage(msg) {
-        if (this.messageList.add(msg)) {
-            this.messagesView.display(this.messageList.getPage(), this.messageList.user);
-            console.log("add");
-        }
+        const url="https://jslabdb.datamola.com/messages";
+        this.chatApiServeci.postM(url,msg)
+        .then(res=>{
+            if(res.status===201){
+                this.showMessages();
+            }else{
+                document.querySelector(".error").style.display="flex"
+            }
+        })
     }
     removeMessage(id) {
         if (this.messageList.remove(id)) {
@@ -226,148 +294,47 @@ class ChatController{
         }
     }
     editMessage(id, msg) {
-        if (this.messageList.edit(id, msg)) {
-            this.messagesView.display(this.messageList.getPage(), this.messageList.user);
-        }
+        const url=`https://jslabdb.datamola.com/messages/${id}`;
+        this.chatApiServeci.putM(url,msg)
+        .then(()=>{
+            this.showMessages();
+        });
     }
     setCurrentUser() {
-        if(this.headerView.display(this.messageList.user)){
+        if(this.headerView.display(JSON.parse(localStorage.getItem("user")))){
             document.getElementById("new-message").disabled=false;
             document.getElementById("btn-send").disabled=false;  
             document.getElementById("select-user-name").disabled=false;
         }
-        this.messagesView.display(this.messageList.getPage(), this.messageList.user);
     }
     exit(){
-        // localStorage.removeItem("user");
-        this.messageList.user="";
-        this.headerView.display(this.messageList.user);
-        this.showMessages();
-        document.getElementById("select-user-name").disabled=true;
-        document.getElementById("new-message").disabled=true;
-        document.getElementById("btn-send").disabled=true;
-        console.log("gdr");
+        const url="https://jslabdb.datamola.com/auth/logout";
+        this.chatApiServeci.postM(url)
+        .then((data)=>{
+            if(data.status===200){
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                this.headerView.display("");
+                this.showMessages();
+                document.getElementById("select-user-name").disabled=true;
+                document.getElementById("new-message").disabled=true;
+                document.getElementById("btn-send").disabled=true;
+            }else{
+                document.querySelector(".error").style.display="flex"
+            }
+        });  
     }
     f_load_more(){
         console.log(this);
         this.showMessages(0,ChatController.count_messages+=10,this.filter
-        //     {
-        // author: this.filter_author_value,
-        // dateFrom: this.filter_date_from_value,
-        // dateTo: this.filter_date_to_value,
-        // text: this.filter_msg_value
-        // }
         )
     }
-    showAllUsers(){
-        this.personalUsersView.display(this.userList.users,this.messageList.user);
+    f_load_more_reset(event){
+        event.preventDefault();
+        ChatController.count_messages=10;
+        this.showMessages(0,ChatController.count_messages,this.filter);
     }
 }
 
 
-function fillLocalStorage(){
-    if(!JSON.parse(localStorage.getItem("messageList"))){
-        localStorage.setItem("messageList",JSON.stringify(array_of_messages.map((item)=>new Message(item))));
-            console.log(JSON.parse(localStorage.getItem("messageList")));
-    }
-    if(!JSON.parse(localStorage.getItem("user"))){
-        localStorage.setItem("user",JSON.stringify(""));
-            console.log("ff2");
-    }
-    if(!JSON.parse(localStorage.getItem("userList"))){
-        localStorage.setItem("userList",JSON.stringify(uList));
-        console.log(JSON.parse(localStorage.getItem("userList")));
-    }
-    console.log("ffe");
-}
-
-fillLocalStorage();
 const chatController=new ChatController();
-// const btn_signin=document.getElementById("signin");
-// const btn_registr=document.getElementById("registr");
-// const load_more=document.getElementById("loud-more");
-// const filter_author=document.getElementById("filter-author");
-// const filter_date_to=document.getElementById("filter-date-to");
-// const filter_date_from=document.getElementById("filter-date-from");
-// const filter_msg=document.getElementById("filter-msg");
-// const add_message=document.getElementById("new-message");
-// const btn_send=document.getElementById("btn-send");
-// const btn_exit=document.getElementById("btn-exit");
-
-// document.getElementById("filter-msg").addEventListener("input",function(event){
-//     console.log(document.getElementById("filter-msg").value);
-//     chatController.showMessages(0,5,{text: document.getElementById("filter-msg").value})
-// });
-
-// document.getElementById("filter-author").addEventListener("input",function(event){
-//     console.log(document.getElementById("filter-author").value);
-//     chatController.showMessages(0,5,{author: document.getElementById("filter-author").value})
-// });
-
-// document.getElementById("filter-author").addEventListener("input",function(event){
-//     console.log(document.getElementById("filter-author").value);
-//     chatController.showMessages(0,5,{author: document.getElementById("filter-author").value})
-// });
-
-// filter_author.addEventListener("input", function() {chatController.showMessages(0,10,{author: filter_author.value})});
-// filter_date_to.addEventListener("change", function() {chatController.showMessages(0,10,{dateTo: filter_date_to.value})});
-// filter_date_from.addEventListener("change", function() {chatController.showMessages(0,10,{dateFrom: filter_date_from.value})});
-// filter_msg.addEventListener("input", function() {chatController.showMessages(0,10,{text: filter_msg.value})});
-
-// filter_author.addEventListener("input",chatController.showMessages(0,5,{author: filter_author.value}));
-// console.log(filter_author.value);
-// console.log(chatController.messageList.getPage(0,30)) ;
-
-
-
-// load_more.addEventListener("click",function(){
-//     const filter_author_value=document.getElementById("filter-author").value;
-//     const filter_date_to_value=document.getElementById("filter-date-to").value;
-//     const filter_date_from_value=document.getElementById("filter-date-from").value;
-//     const filter_msg_value=document.getElementById("filter-msg").value;
-//     chatController.showMessages(0,ChatController.count_messages+=10,{
-//         author: filter_author_value,
-//         dateFrom: filter_date_from_value,
-//         dateTo: filter_date_to_value,
-//         text: filter_msg_value
-//     })
-// });
-// let target;
-
-
-
-
-
-
-// btn_send.addEventListener("click",f_addMessage);
-
-// const f_editMessage=function(targ=false){
-//     if(targ){
-//         let target=targ;
-//         chatController.editMessage(target.closest(".message-item").id,{text: add_message.value});
-//         add_message.value="";
-//         console.log("edit");
-//     }else{
-//         chatController.addMessage({text: add_message.value});
-//         add_message.value="";
-//         console.log("addint");
-//     }
-
-// }
-// btn_send.addEventListener("click", function() {f_editMessage()});
-
-
-// const f_addMessage=function(){
-//                     if(flag){
-//                     chatController.editMessage(target.closest(".message-item").id,{text: add_message.value});
-//                     add_message.value="";
-//                     console.log("edit");
-//                 }else{
-//                     chatController.addMessage({text: add_message.value});
-//                     add_message.value="";
-//                     console.log("addint");
-//                 }
-// }
-// flag=false;
-// btn_send.addEventListener("click",function(){f_editMessage("")});
-// btn_registr.addEventListener("click", chatController.signin()) ;

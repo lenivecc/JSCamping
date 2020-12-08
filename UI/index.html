@@ -75,16 +75,17 @@
                 <h1>Just Chat</h1>
                 <div>
                     <a  class="return re-chat" href="" id="return-chat1">chat</a>
-                    <!-- <span style="margin: 0 5px;">/</span>
-                    <a class="return re-registr" href="" id="registr2">registration</a> -->
                 </div>
             </div>
             <div class="forma" >
                 <h1>Sign in</h1>
                 <form action="" id="author-form" name="authorization">
-                    <input type="text" class="sgn-npt" placeholder="login" required>
+                    <input type="text" class="sgn-npt" placeholder="login" required name="name">
+                    <div class="login-error" id="login-error">
+                        <span>Invalid login or password</span>
+                    </div>
                     <br>
-                    <input type="password" class="sgn-npt" placeholder="password" required>
+                    <input type="password" class="sgn-npt" placeholder="password" required name="pass">
                     <br>
                     <br>
                     <button type="submit" class="enter" id="submit-author">Enter</button>
@@ -98,34 +99,33 @@
                 <h1>Just Chat</h1>
                 <div>
                     <a class="return re-chat" href="" id="return-chat2">chat</a>
-                    <!-- <span style="margin: 0 5px;">/</span>
-                    <a class="return re-author" href="">authorization</a> -->
                 </div>
             </div>
             <div class="forma" >
                 <h1>Registration</h1>
-                <form action="" id="registr-form" name="registration"> 
-                    <input type="text" class="sgn-npt" placeholder="login" required>
-                    <div class="login-error" id="login-error">
+                <form action="" id="registr-form" name="registration" method="POST" enctype="multipart/form-data"> 
+                    <input type="text" class="sgn-npt" placeholder="login" required name="name">
+                    <div class="reg-error">
                         <span>The user with this name already exists</span>
                     </div>
-                    <input type="password" class="sgn-npt" placeholder="password" required>
-                    <input type="password" class="sgn-npt" placeholder="password" required>
+                    <input type="password" class="sgn-npt" placeholder="password" required name="pass">
+                    <div class="reg-error-wpass" >
+                        <span>Passwords don't match</span>
+                    </div>
+                    <input type="password" class="sgn-npt" placeholder="password" required >
                     <br><br>
                     <button type="submit" class="enter" id="submit-registr">Enter</button>
                 </form>
             </div>
         </div>
     </div>
-
+    <div class="error">
+        <img src="img/error.svg" alt="">
+        <div class="error-text">Oops!
+        An explosion occurred on the server! Please wait a little...reload page and try again</div>
+    </div>
     <div class="container">
-        <!-- <div class="container-block"> -->
         <aside class="left-aside">
-                <!-- <div class="loud-flex" id="loud-flex">
-                    <button class="loud-more" id="loud-more">
-                        <img src="img/row-top.svg" alt="">
-                    </button>
-                </div> -->
             <div class="chat-items selected-chat-item">
                 <img class="main-img" src="img/logo-JC.svg" alt="Icon of main chat">
                 <span class="chatName">Just Chat</span>
@@ -170,8 +170,6 @@
         <button class="btn-msg" id="btn-delete-msg">Delete</button>
     </div>
             <div class="chat-space" id="chat">
-                <!-- <div class="chat-space-block"> -->
-                <!-- </div> -->
             </div>
             <div class="message-space">
                 <select class="select-user-name" name="" id="select-user-name" disabled>
@@ -195,30 +193,7 @@
         <aside class="right-aside" scrolling="no" >
             <span>online</span>
             <div id="online-panel">
-
-            <!-- </div>
-            <div class="online-item">
-                <div class="online-icon"></div>
-                <div class="online-name">Pavel Lebedev</div>
-            </div>
-            <div class="online-item">
-                <div class="online-icon"></div>
-                <div class="online-name">Ivan Sergeev</div>
-            </div>
-            <div class="online-item">
-                <div class="online-icon"></div>
-                <div class="online-name">Alex H</div>
-            </div>
-            <div class="online-item">
-                <div class="online-icon"></div>
-                <div class="online-name">Lexa Skilet</div>
-            </div>
-            <div class="online-item">
-                <div class="online-icon"></div>
-                <div class="online-name">Nastya</div>
-            </div> -->
         </aside>
-        <!-- </div> -->
     </div>
     <footer>
         <p>Just Chat</p>
@@ -227,13 +202,9 @@
         <p>Updated 10.10.2020</p>
     </footer>
     
-    <script src="mocks.js"></script>
-    <script src="message.js"></script>
-    <script src="messageList.js"></script>
     <script src="viewClasses.js"></script>
-    <!-- <script src="globalFunctions.js"></script> -->
+    <script src="chatApiService.js"></script>
     <script src="chatController.js"></script>
-
 
 </body>
 
