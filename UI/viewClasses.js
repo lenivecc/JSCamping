@@ -14,10 +14,16 @@ class PersonalUsersView{
     });
     let str="";
     for(const user of arr){
-      str+=`<option value="${user.name}">${user.name}</option>`
+      str+=`<option value="${user.name}">${PersonalUsersView.valid(user.name)}</option>`
     }
     select.innerHTML="";
     select.innerHTML=`<option value="public">public</option>`+str;
+  }
+  static valid(user){
+    if(user.length>20){
+      return `${user.slice(0,20)}...`
+    }
+    return user;
   }
 }
 
@@ -145,7 +151,7 @@ class ActiveUsersView {
     for (const item of activeUsers) {
       if(item.isActive){
         const el = temp.content.cloneNode(true);
-        el.querySelector('.online-name').textContent = item.name;
+        el.querySelector('.online-name').textContent = PersonalUsersView.valid(item.name);
         fragment.appendChild(el);
       }
     }
